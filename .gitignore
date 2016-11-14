@@ -1,0 +1,162 @@
+<html>
+<head>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script src="https://github.com/niklasvh/html2canvas/releases/download/0.5.0-alpha1/html2canvas.js"></script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+<script>
+ //include new google charts library
+      google.charts.load('current', {'packages':['sankey']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'From');
+        data.addColumn('string', 'To');
+        data.addColumn('number', 'Weight');
+    data.addRows([
+           ['coal', 'power plant', (3834.1-1305)/0.36],
+          ['coal', 'CHP', 1305/0.36],
+          ['coal', 'boiler', 496.0902483+6802.244594],           
+          ['coal', 'household stove', 202.682736988],   
+          ['coal', 'chemical industry', 4259.349593],
+          ['coal', 'others',  1050.572624],
+          
+          ['natural gas', 'power plant', 100 / 0.5], 
+          ['natural gas', 'CHP', 65/0.5],
+          ['natural gas', 'household stove', 373.8060368],
+          ['natural gas', 'boiler', 530.6697062],
+          ['natural gas', 'chemical industry', 504.5039383],
+          ['natural gas', 'others',109.8132978],  
+   
+          ['oil', 'chemical industry', 3868.221936],
+          ['oil', 'boiler',  129.7240482], 
+          ['oil', 'others', 5.441567117],          
+          
+          ['hydro', 'power plant', 1126.4 / 0.86],
+          ['nuclear', 'power plant', 170.8 / 0.35],
+     
+          ['renewables', 'power plant', 185.43+35.18+1+5],
+          ['renewables', 'household stove', 360.3700035],
+          
+          ['CHP', 'electricity', 1305],
+          ['CHP', 'industry heating', 492.142161],
+          ['CHP', 'district heating', 461.6661761],
+          ['CHP', 'loss', 65/0.5+1305/0.6-492.142161-461.6661761],
+          
+          ['boiler', 'industry heating', 6802.244594*0.7+530.6697062*0.9],
+          ['boiler', 'district heating', 496.0902483*0.7+129.7240482*0.9],  
+          ['boiler', 'loss', 496.0902483*0.3+6802.2445943*0.3+ 530.6697062*0.1+129.7240482*0.1],            
+          
+ 
+          ['power plant', 'electricity', 5550.58-1305],
+          ['power plant', 'loss', (3834.1-1305)/ 0.36*0.64+170.8 / 0.35*0.6+100 / 0.5],
+      
+          ['household stove','residential heating', 360.3700035*0.7+373.8060368*0.9+202.682736988*0.7],
+          ['household stove', 'loss', 202.682736988 *0.3+360.3700035*0.3+373.8060368*0.1 ],
+          
+         
+          ['district heating','residential heating', 461.6661761*0.7+496.0902483+129.7240482*0.9],
+          
+          ['residential heating','heating', (461.6661761*0.7+496.0902483+129.7240482*0.9+360.3700035*0.7+373.8060368*0.9+202.682736988*0.7)*0.8],
+          ['residential heating','loss', (461.6661761*0.7+496.0902483+129.7240482*0.9+360.3700035*0.7+373.8060368*0.9+202.682736988*0.7)*0.2],          
+          ['industry heating','heating', (6802.244594*0.7+530.6697062*0.9+492.142161)*0.8],            
+          ['industry heating','loss', (6802.244594*0.7+530.6697062*0.9+492.142161)*0.2],          
+
+          ['chemical industry', 'transport', 2484.56001],
+          ['chemical industry', 'chemicals', (4259.349593+615+3868-2484.56001)*0.4],
+          ['chemical industry', 'loss', (4259.349593+615+3868-2484.56001)*0.6],
+        ]);
+
+        // Sets chart options.
+       var colors = ['#a6cee3', '#b2df8a',  '#33a02c','#fb9a99', 
+                '#fdbf6f',  '#cab2d6', '#ffff99', '#1f78b4'];
+        var options = {
+          width:700,
+          height:400,
+          sankey: {
+                   node: { colors: colors,nodePadding: 20},
+                   link: {colorMode: 'gradient', colors: colors},    
+      },
+        };
+
+        // Instantiates and draws our chart, passing in some options.
+
+      
+        var chart = new google.visualization.Sankey(document.getElementById('sankey_basic'));
+
+
+
+        chart.draw(data, options);
+
+      }
+
+	  
+	  
+	 
+	  //print code
+
+   $("#btnPrint").live("click", function () {
+            var divContents = $("#sankey_basic").html();
+            var printWindow = window.open('', '', 'height=400,width=800');
+            printWindow.document.write('<html><head><title>Sankey</title>');
+            printWindow.document.write('</head><body >');
+            printWindow.document.write(divContents);
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            printWindow.print();
+        });
+    //end   
+
+	
+	//image code
+  
+$(function() {    
+$("#salvapng").click(function() { 
+var element = $("#html-content-holder");          
+html2canvas(element, {
+    letterRendering: true,
+}).then(function(canvas){
+                var imgageData = canvas.toDataURL("image/png");
+        var newData = imgageData.replace(/^data:image\/png/, "data:application/octet-stream");
+        $("<a>", {href:newData, download:"Proof1.png",on:{click:function(){$(this).remove()}}})
+        .appendTo("body")[0].click()
+ })
+}); 
+});
+  
+$(function() {    
+$("#salvajpg").click(function() { 
+var element = $("#html-content-holder");         
+html2canvas(element, {
+    letterRendering: true,
+
+}).then(function(canvas){
+                var imgageData = canvas.toDataURL("image/jpg");
+        var newData = imgageData.replace(/^data:image\/jpg/, "data:application/octet-stream");
+        $("<a>", {href:newData, download:"Proof1.jpg",on:{click:function(){$(this).remove()}}})
+        .appendTo("body")[0].click()
+ })
+}); 
+}); 
+	
+</script>
+
+</head>
+<body>
+<div id="html-content-holder" style=" width: 900; height: 400";
+        padding-left: 25px; padding-top: 10px;">
+		<h1>Sankey Diagram</h1>
+		 <div id="sankey_basic" style="width: 900; height: 300;" ></div>
+</div>
+	&nbsp;
+	<input type="button" id="salvapng" value="Save PNG image"/>
+	&nbsp;
+	<input type="button" id="salvajpg" value="Save JPG image"/>
+	&nbsp;	
+	 <input type="button" value="Print image" id="btnPrint" />
+	 &nbsp;
+    <br/>
+</body>
+</html>
